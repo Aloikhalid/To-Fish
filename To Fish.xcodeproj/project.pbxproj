@@ -6,8 +6,41 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		569F438F2F53749A0064E2BF /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 569F438E2F53749A0064E2BF /* WidgetKit.framework */; };
+		569F43912F53749A0064E2BF /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 569F43902F53749A0064E2BF /* SwiftUI.framework */; };
+		569F43A22F53749B0064E2BF /* ToFishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		569F43A02F53749B0064E2BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 569F431B2F521DEB0064E2BF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 569F438B2F53749A0064E2BF;
+			remoteInfo = ToFishWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		569F43A72F53749B0064E2BF /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				569F43A22F53749B0064E2BF /* ToFishWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		569F43232F521DEB0064E2BF /* To Fish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "To Fish.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ToFishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		569F438E2F53749A0064E2BF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		569F43902F53749A0064E2BF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -17,6 +50,13 @@
 				Info.plist,
 			);
 			target = 569F43222F521DEB0064E2BF /* To Fish */;
+		};
+		569F43A62F53749B0064E2BF /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 569F438B2F53749A0064E2BF /* ToFishWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -29,6 +69,14 @@
 			path = "To Fish";
 			sourceTree = "<group>";
 		};
+		569F43922F53749A0064E2BF /* ToFishWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				569F43A62F53749B0064E2BF /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */,
+			);
+			path = ToFishWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,6 +87,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		569F43892F53749A0064E2BF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				569F43912F53749A0064E2BF /* SwiftUI.framework in Frameworks */,
+				569F438F2F53749A0064E2BF /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -46,6 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				569F43252F521DEB0064E2BF /* To Fish */,
+				569F43922F53749A0064E2BF /* ToFishWidget */,
+				569F438D2F53749A0064E2BF /* Frameworks */,
 				569F43242F521DEB0064E2BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +113,18 @@
 			isa = PBXGroup;
 			children = (
 				569F43232F521DEB0064E2BF /* To Fish.app */,
+				569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		569F438D2F53749A0064E2BF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				569F438E2F53749A0064E2BF /* WidgetKit.framework */,
+				569F43902F53749A0064E2BF /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +137,12 @@
 				569F431F2F521DEB0064E2BF /* Sources */,
 				569F43202F521DEB0064E2BF /* Frameworks */,
 				569F43212F521DEB0064E2BF /* Resources */,
+				569F43A72F53749B0064E2BF /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				569F43A12F53749B0064E2BF /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				569F43252F521DEB0064E2BF /* To Fish */,
@@ -82,6 +153,28 @@
 			productName = "To Fish";
 			productReference = 569F43232F521DEB0064E2BF /* To Fish.app */;
 			productType = "com.apple.product-type.application";
+		};
+		569F438B2F53749A0064E2BF /* ToFishWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 569F43A32F53749B0064E2BF /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */;
+			buildPhases = (
+				569F43882F53749A0064E2BF /* Sources */,
+				569F43892F53749A0064E2BF /* Frameworks */,
+				569F438A2F53749A0064E2BF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				569F43922F53749A0064E2BF /* ToFishWidget */,
+			);
+			name = ToFishWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = ToFishWidgetExtension;
+			productReference = 569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -94,6 +187,9 @@
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
 					569F43222F521DEB0064E2BF = {
+						CreatedOnToolsVersion = 26.2;
+					};
+					569F438B2F53749A0064E2BF = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -113,12 +209,20 @@
 			projectRoot = "";
 			targets = (
 				569F43222F521DEB0064E2BF /* To Fish */,
+				569F438B2F53749A0064E2BF /* ToFishWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		569F43212F521DEB0064E2BF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		569F438A2F53749A0064E2BF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +239,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		569F43882F53749A0064E2BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		569F43A12F53749B0064E2BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 569F438B2F53749A0064E2BF /* ToFishWidgetExtension */;
+			targetProxy = 569F43A02F53749B0064E2BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		569F43322F521DEC0064E2BF /* Debug */ = {
@@ -327,6 +446,66 @@
 			};
 			name = Release;
 		};
+		569F43A42F53749B0064E2BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TM392S4N9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ToFishWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ToFishWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alia.To-Fish.ToFishWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		569F43A52F53749B0064E2BF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = TM392S4N9A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ToFishWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ToFishWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.alia.To-Fish.ToFishWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -344,6 +523,15 @@
 			buildConfigurations = (
 				569F43322F521DEC0064E2BF /* Debug */,
 				569F43332F521DEC0064E2BF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		569F43A32F53749B0064E2BF /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				569F43A42F53749B0064E2BF /* Debug */,
+				569F43A52F53749B0064E2BF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
