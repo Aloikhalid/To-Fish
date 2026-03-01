@@ -150,8 +150,8 @@ struct AddTaskView: View {
                                 .padding()
                                 .background(Capsule().fill(Color.cyan.opacity(0.5)))
                         }
-                        .disabled(fishName.isEmpty)
-                        .opacity(fishName.isEmpty ? 0.5 : 1)
+                        .disabled(fishName.isEmpty || (isMultiStep && subtaskTitles.allSatisfy { $0.isEmpty }))
+                        .opacity((fishName.isEmpty || (isMultiStep && subtaskTitles.allSatisfy { $0.isEmpty })) ? 0.5 : 1)
                     }
                     .padding()
                 }
