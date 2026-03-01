@@ -58,17 +58,14 @@ struct AquariumView: View {
                 }
 
                 // MARK: - Layer 5: Seaweed 1
+                // BUG-17: waveOffset animation driven by ZStack.onAppear (below) so both
+                // seaweed layers share one driver and layer 6 doesn't depend on layer 5
                 Image("layer_seaweed1")
                     .resizable()
                     .scaledToFill()
                     .offset(x: waveOffset)
                     .ignoresSafeArea()
                     .allowsHitTesting(false)
-                    .onAppear {
-                        withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
-                            waveOffset = 6
-                        }
-                    }
 
                 // MARK: - Layer 6: Seaweed 2
                 Image("layer_seaweed2")
@@ -96,6 +93,12 @@ struct AquariumView: View {
                 }
             }
             .frame(width: geo.size.width, height: geo.size.height)
+            // BUG-17: single shared animation driver for waveOffset
+            .onAppear {
+                withAnimation(.easeInOut(duration: 4).repeatForever(autoreverses: true)) {
+                    waveOffset = 6
+                }
+            }
         }
         .ignoresSafeArea()
     }
@@ -114,6 +117,8 @@ struct FishView: View {
     @State private var movingRight = Bool.random()
     @State private var xOffset: CGFloat = 0
     @State private var yOffset: CGFloat = 0
+    // BUG-03: guard flag to break dangling asyncAfter chains on disappear
+    @State private var isSwimming = false
 
     var swimDistance: CGFloat { screenWidth * 0.45 }
     var verticalRange: CGFloat { screenHeight * 0.35 }
@@ -134,7 +139,9 @@ struct FishView: View {
         task.isMultiStep ? (movingRight ? -1 : 1) : (movingRight ? 1 : -1)
     }
 
+    // BUG-03: guard on isSwimming so the asyncAfter chain stops after .onDisappear
     func swim() {
+        guard isSwimming else { return }
         let duration = Double.random(in: 10...14)
         let goRight = !movingRight
         movingRight = goRight
@@ -169,8 +176,11 @@ struct FishView: View {
                     .repeatForever(autoreverses: true)) {
                     floatOffset = CGFloat.random(in: -15...15)
                 }
+                isSwimming = true
                 swim()
             }
+            // BUG-03: stop the chain when the view leaves the hierarchy
+            .onDisappear { isSwimming = false }
             .onTapGesture { withAnimation(.spring(response: 0.35)) { selectedTask = task } }
     }
 }
@@ -187,11 +197,15 @@ struct BabySeahorseView: View {
     @State private var movingRight = Bool.random()
     @State private var xOffset: CGFloat = 0
     @State private var yOffset: CGFloat = 0
+    // BUG-03: guard flag to break dangling asyncAfter chains on disappear
+    @State private var isSwimming = false
 
     var swimDistance: CGFloat { screenWidth * 0.3 }
     var verticalRange: CGFloat { screenHeight * 0.25 }
 
+    // BUG-03: guard on isSwimming so the asyncAfter chain stops after .onDisappear
     func swim() {
+        guard isSwimming else { return }
         let duration = Double.random(in: 8...12)
         let goRight = !movingRight
         movingRight = goRight
@@ -226,7 +240,10 @@ struct BabySeahorseView: View {
                     .repeatForever(autoreverses: true)) {
                     floatOffset = CGFloat.random(in: -8...8)
                 }
+                isSwimming = true
                 swim()
             }
+            // BUG-03: stop the chain when the view leaves the hierarchy
+            .onDisappear { isSwimming = false }
     }
 }

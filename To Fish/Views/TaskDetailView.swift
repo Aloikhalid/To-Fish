@@ -7,6 +7,13 @@ struct TaskDetailView: View {
     @State private var showDeleteConfirm = false
     @State private var showReleaseConfirm = false
 
+    // BUG-12: single static formatter instead of per-call allocation
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        return f
+    }()
+
     var liveSubtasks: [Subtask] {
         viewModel.activeTasks.first(where: { $0.id == task.id })?.subtasks ?? task.subtasks
     }
@@ -72,7 +79,9 @@ struct TaskDetailView: View {
                                 .font(.custom("Kavoon-Regular", size: 22))
                                 .foregroundColor(.orange)
                         } else {
-                            Text("\(viewModel.daysRemaining(for: task)) days left")
+                            // BUG-07: correct singular/plural for days
+                            let d = viewModel.daysRemaining(for: task)
+                            Text("\(d) \(d == 1 ? "day" : "days") left")
                                 .font(.custom("Kavoon-Regular", size: 22))
                                 .foregroundColor(.white)
                         }
@@ -130,99 +139,113 @@ struct TaskDetailView: View {
                 .padding()
 
                 // MARK: - Delete Confirmation Overlay
+                // BUG-18: wrapped in VStack { Spacer()…Spacer() } for correct centering in fixed-height card
                 if showDeleteConfirm {
                     Color.black.opacity(0.5).ignoresSafeArea()
 
-                    VStack(spacing: 20) {
-                        Image(fishImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: geo.size.width * 0.2)
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 20) {
+                            Image(fishImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: geo.size.width * 0.2)
 
-                        Text("Are you sure you want to delete \(task.fishName)'s task?")
-                            .font(.custom("Kavoon-Regular", size: 20))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
+                            Text("Are you sure you want to delete \(task.fishName)'s task?")
+                                .font(.custom("Kavoon-Regular", size: 20))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
 
-                        HStack(spacing: 16) {
-                            Button(action: { showDeleteConfirm = false }) {
-                                Text("Cancel")
-                                    .font(.custom("Kavoon-Regular", size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Capsule().fill(Color.gray.opacity(0.9)))
-                            }
+                            HStack(spacing: 16) {
+                                Button(action: { showDeleteConfirm = false }) {
+                                    Text("Cancel")
+                                        .font(.custom("Kavoon-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Capsule().fill(Color.gray.opacity(0.9)))
+                                }
 
-                            Button(action: {
-                                viewModel.deleteTask(task)
-                                withAnimation(.spring(response: 0.35)) { selectedTask = nil }
-                            }) {
-                                Text("Delete")
-                                    .font(.custom("Kavoon-Regular", size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Capsule().fill(Color.red.opacity(0.9)))
+                                Button(action: {
+                                    viewModel.deleteTask(task)
+                                    withAnimation(.spring(response: 0.35)) { selectedTask = nil }
+                                }) {
+                                    Text("Delete")
+                                        .font(.custom("Kavoon-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Capsule().fill(Color.red.opacity(0.9)))
+                                }
                             }
                         }
+                        .padding(30)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(Color.teal.opacity(0.9)))
+                        .padding(40)
+                        Spacer()
                     }
-                    .padding(30)
-                    .background(RoundedRectangle(cornerRadius: 20).fill(Color.teal.opacity(0.9)))
-                    .padding(40)
                 }
 
                 // MARK: - Release Confirmation Overlay
+                // BUG-18: wrapped in VStack { Spacer()…Spacer() } for correct centering in fixed-height card
                 if showReleaseConfirm {
                     Color.black.opacity(0.5).ignoresSafeArea()
 
-                    VStack(spacing: 20) {
-                        Image(fishImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: geo.size.width * 0.2)
+                    VStack {
+                        Spacer()
+                        VStack(spacing: 20) {
+                            Image(fishImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: geo.size.width * 0.2)
 
-                        Text("Are you done with \(task.fishName)'s task?")
-                            .font(.custom("Kavoon-Regular", size: 20))
-                            .foregroundColor(.white)
-                            .multilineTextAlignment(.center)
+                            Text("Are you done with \(task.fishName)'s task?")
+                                .font(.custom("Kavoon-Regular", size: 20))
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
 
-                        HStack(spacing: 16) {
-                            Button(action: { showReleaseConfirm = false }) {
-                                Text("Cancel")
-                                    .font(.custom("Kavoon-Regular", size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Capsule().fill(Color.gray.opacity(0.9)))
-                            }
+                            HStack(spacing: 16) {
+                                Button(action: { showReleaseConfirm = false }) {
+                                    Text("Cancel")
+                                        .font(.custom("Kavoon-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Capsule().fill(Color.gray.opacity(0.9)))
+                                }
 
-                            Button(action: {
-                                playBubblesSound()
-                                viewModel.releaseTask(task)
-                                withAnimation(.spring(response: 0.35)) { selectedTask = nil }
-                            }) {
-                                Text("Yes!")
-                                    .font(.custom("Kavoon-Regular", size: 16))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(Capsule().fill(Color.cyan.opacity(0.7)))
+                                Button(action: {
+                                    playBubblesSound()
+                                    viewModel.releaseTask(task)
+                                    withAnimation(.spring(response: 0.35)) { selectedTask = nil }
+                                }) {
+                                    Text("Yes!")
+                                        .font(.custom("Kavoon-Regular", size: 16))
+                                        .foregroundColor(.white)
+                                        .frame(maxWidth: .infinity)
+                                        .padding()
+                                        .background(Capsule().fill(Color.cyan.opacity(0.7)))
+                                }
                             }
                         }
+                        .padding(30)
+                        .background(RoundedRectangle(cornerRadius: 20).fill(Color.teal.opacity(0.6)))
+                        .padding(40)
+                        Spacer()
                     }
-                    .padding(30)
-                    .background(RoundedRectangle(cornerRadius: 20).fill(Color.teal.opacity(0.6)))
-                    .padding(40)
+                }
+            }
+            // BUG-10: auto-dismiss if the task is deleted while the card is open
+            .onChange(of: viewModel.activeTasks.count) { _, _ in
+                if !viewModel.activeTasks.contains(where: { $0.id == task.id }) {
+                    withAnimation(.spring(response: 0.35)) { selectedTask = nil }
                 }
             }
         }
     }
 
     func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: date)
+        TaskDetailView.dateFormatter.string(from: date)
     }
 }
 

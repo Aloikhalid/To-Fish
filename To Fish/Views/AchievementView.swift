@@ -13,7 +13,7 @@ struct AchievementsView: View {
                     .scaledToFill()
                     .frame(width: geo.size.width, height: geo.size.height)
                     .scaleEffect(1.2)
-                     
+
                 Color.black.opacity(0.2)
                     .scaleEffect(1.2)
 
@@ -51,7 +51,8 @@ struct AchievementsView: View {
                         ScrollView {
                             VStack(spacing: 12) {
                                 ForEach(viewModel.achievements) { task in
-                                    AchievementCard(task: task, viewModel: viewModel,
+                                    // BUG-09: viewModel removed from AchievementCard — it was never used
+                                    AchievementCard(task: task,
                                                     cardWidth: geo.size.width - 32,
                                                     isExpanded: selectedTask?.id == task.id)
                                         .onTapGesture {
@@ -82,9 +83,16 @@ struct AchievementsView: View {
 // MARK: - Achievement Card
 struct AchievementCard: View {
     let task: TaskModel
-    let viewModel: TaskViewModel
+    // BUG-09: viewModel parameter removed — it was never used in the card body
     let cardWidth: CGFloat
     let isExpanded: Bool
+
+    // BUG-12: single static formatter instead of per-call allocation
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        return f
+    }()
 
     var fishImage: String {
         if task.isMultiStep { return "seahorse" }
@@ -157,8 +165,6 @@ struct AchievementCard: View {
     }
 
     func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: date)
+        AchievementCard.dateFormatter.string(from: date)
     }
 }

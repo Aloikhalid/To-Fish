@@ -70,26 +70,36 @@ class TaskViewModel: ObservableObject {
         }
     }
 
+    // BUG-08: returns false when isMultiStep but no subtasks exist (prevents vacuous-truth bypass)
     func allSubtasksComplete(for task: TaskModel) -> Bool {
         guard task.isMultiStep else { return true }
+        guard !task.subtasks.isEmpty else { return false }
         return task.subtasks.allSatisfy { $0.isComplete }
     }
 
     // MARK: - Time Calculations
+    // BUG-01 & BUG-04: single secondsRemaining helper; no force-unwrap; consistent time source
+    func secondsRemaining(for task: TaskModel) -> TimeInterval {
+        guard let deadline = Calendar.current.date(
+            byAdding: .day,
+            value: daysForDuration(task.duration),
+            to: task.dateAdded
+        ) else { return 0 }
+        return max(0, deadline.timeIntervalSinceNow)
+    }
+
     func daysRemaining(for task: TaskModel) -> Int {
-        let deadline = Calendar.current.date(byAdding: .day, value: daysForDuration(task.duration), to: task.dateAdded)!
-        let remaining = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
-        return max(0, remaining)
+        Int(secondsRemaining(for: task) / 86400)
     }
 
     func hoursRemaining(for task: TaskModel) -> Int {
-        let deadline = Calendar.current.date(byAdding: .day, value: daysForDuration(task.duration), to: task.dateAdded)!
-        let remaining = Calendar.current.dateComponents([.hour], from: Date(), to: deadline).hour ?? 0
-        return max(0, remaining)
+        Int(secondsRemaining(for: task) / 3600)
     }
 
+    // BUG-04: correct last-day check using total seconds
     func isLastDay(for task: TaskModel) -> Bool {
-        return daysRemaining(for: task) == 0 && hoursRemaining(for: task) > 0
+        let secs = secondsRemaining(for: task)
+        return secs > 0 && secs < 86400
     }
 
     private func daysForDuration(_ duration: TaskDuration) -> Int {
@@ -126,8 +136,13 @@ class TaskViewModel: ObservableObject {
     }
 
     // MARK: - Save
+    // BUG-20: print encoding failures instead of silently dropping them
     private func save() {
-        try? modelContext?.save()
+        do {
+            try modelContext?.save()
+        } catch {
+            print("TaskViewModel save error: \(error)")
+        }
     }
 }
 

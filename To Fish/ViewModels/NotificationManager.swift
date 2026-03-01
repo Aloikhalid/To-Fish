@@ -42,7 +42,10 @@ struct NotificationManager {
                 from: slot.fireDate
             )
             let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: false)
-            center.add(UNNotificationRequest(identifier: slot.id, content: content, trigger: trigger))
+            // BUG-21: pass completion handler to surface scheduling errors
+            center.add(UNNotificationRequest(identifier: slot.id, content: content, trigger: trigger)) { error in
+                if let error { print("Notification scheduling error (\(slot.id)): \(error)") }
+            }
         }
     }
 
