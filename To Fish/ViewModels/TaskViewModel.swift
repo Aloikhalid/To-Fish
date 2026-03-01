@@ -35,7 +35,11 @@ class TaskViewModel: ObservableObject {
     func addTask(_ task: TaskModel) {
         modelContext?.insert(task)
         save()
-        fetch()
+        // Directly append instead of re-fetching: SwiftData may not surface a
+        // just-inserted object to an immediate same-context fetch, so the task
+        // would silently disappear from activeTasks until the next cold launch.
+        activeTasks.append(task)
+        syncToWidget()
     }
 
     func releaseTask(_ task: TaskModel) {
