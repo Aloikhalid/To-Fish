@@ -185,6 +185,37 @@ struct FishView: View {
     }
 }
 
+// MARK: - Preview
+
+#Preview {
+    let schema = Schema([TaskModel.self, Subtask.self])
+    let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: schema, configurations: [config])
+    let context = container.mainContext
+
+    // Three plain fish – UUID hash will spread them across pink / blue / yellow
+    let fish1 = TaskModel(fishName: "Bubbles", taskDescription: "Study for midterm",
+                          duration: .oneDay,    isMultiStep: false, subtasks: [])
+    let fish2 = TaskModel(fishName: "Nemo",    taskDescription: "Buy groceries",
+                          duration: .threeDays, isMultiStep: false, subtasks: [])
+    let fish3 = TaskModel(fishName: "Dory",    taskDescription: "Call dentist",
+                          duration: .oneWeek,   isMultiStep: false, subtasks: [])
+
+    // Multi-step seahorse with one done subtask → spawns a baby seahorse
+    let sub1 = Subtask(title: "Research topic")
+    let sub2 = Subtask(title: "Write outline"); sub2.isComplete = true
+    let seahorse = TaskModel(fishName: "Coral", taskDescription: "Write report",
+                             duration: .oneWeek, isMultiStep: true, subtasks: [sub1, sub2])
+
+    [fish1, fish2, fish3, seahorse].forEach { context.insert($0) }
+
+    let vm = TaskViewModel()
+    vm.activeTasks = [fish1, fish2, fish3, seahorse]
+
+    return AquariumView(viewModel: vm)
+        .modelContainer(container)
+}
+
 // MARK: - Baby Seahorse View
 struct BabySeahorseView: View {
     let parentTask: TaskModel
