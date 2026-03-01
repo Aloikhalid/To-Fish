@@ -18,17 +18,16 @@ class TaskViewModel: ObservableObject {
     func fetch() {
         guard let context = modelContext else { return }
 
-        let activeDescriptor = FetchDescriptor<TaskModel>(
-            predicate: #Predicate<TaskModel> { task in task.isComplete == false },
+        // Fetch all tasks and filter in memory to avoid #Predicate Bool comparison
+        // issues that can silently return empty results on some SwiftData versions.
+        let descriptor = FetchDescriptor<TaskModel>(
             sortBy: [SortDescriptor(\.dateAdded)]
         )
-        let achievementDescriptor = FetchDescriptor<TaskModel>(
-            predicate: #Predicate<TaskModel> { task in task.isComplete == true },
-            sortBy: [SortDescriptor(\.completedDate, order: .reverse)]
-        )
-
-        activeTasks = (try? context.fetch(activeDescriptor)) ?? []
-        achievements = (try? context.fetch(achievementDescriptor)) ?? []
+        let all = (try? context.fetch(descriptor)) ?? []
+        activeTasks = all.filter { !$0.isComplete }
+        achievements = all
+            .filter { $0.isComplete }
+            .sorted { ($0.completedDate ?? .distantPast) > ($1.completedDate ?? .distantPast) }
         syncToWidget()
     }
 

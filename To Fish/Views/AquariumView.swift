@@ -44,7 +44,25 @@ struct AquariumView: View {
                         }
                     }
 
-                // MARK: - Layer 4: Fish & Seahorses
+                // MARK: - Layer 4: Seaweed 1
+                // BUG-17: waveOffset animation driven by ZStack.onAppear (below) so both
+                // seaweed layers share one driver and layer 5 doesn't depend on layer 4
+                Image("layer_seaweed1")
+                    .resizable()
+                    .scaledToFill()
+                    .offset(x: waveOffset)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+
+                // MARK: - Layer 5: Seaweed 2
+                Image("layer_seaweed2")
+                    .resizable()
+                    .scaledToFill()
+                    .offset(x: -waveOffset * 1.3)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+
+                // MARK: - Layer 6: Fish & Seahorses (above seaweed so they're always visible)
                 ForEach(viewModel.activeTasks) { task in
                     FishView(task: task, viewModel: viewModel, selectedTask: $selectedTask,
                              screenWidth: geo.size.width, screenHeight: geo.size.height)
@@ -56,24 +74,6 @@ struct AquariumView: View {
                         }
                     }
                 }
-
-                // MARK: - Layer 5: Seaweed 1
-                // BUG-17: waveOffset animation driven by ZStack.onAppear (below) so both
-                // seaweed layers share one driver and layer 6 doesn't depend on layer 5
-                Image("layer_seaweed1")
-                    .resizable()
-                    .scaledToFill()
-                    .offset(x: waveOffset)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-
-                // MARK: - Layer 6: Seaweed 2
-                Image("layer_seaweed2")
-                    .resizable()
-                    .scaledToFill()
-                    .offset(x: -waveOffset * 1.3)
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
 
                 // MARK: - Task Detail Card Overlay
                 if let task = selectedTask {
