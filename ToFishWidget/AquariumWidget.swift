@@ -227,3 +227,36 @@ struct AquariumWidgetBundle: WidgetBundle {
         AquariumWidget()
     }
 }
+
+// MARK: - Preview
+
+private let previewTasks: [WidgetTask] = [
+    WidgetTask(id: UUID(), fishName: "Bubbles", taskDescription: "Study for exam",
+               duration: "One day", isMultiStep: false, subtasks: [],
+               dateAdded: Date(), completedDate: nil, isComplete: false),
+    WidgetTask(id: UUID(), fishName: "Nemo", taskDescription: "Buy groceries",
+               duration: "3 days", isMultiStep: false, subtasks: [],
+               dateAdded: Date(), completedDate: nil, isComplete: false),
+    WidgetTask(id: UUID(), fishName: "Coral", taskDescription: "Write report",
+               duration: "One week", isMultiStep: true,
+               subtasks: [WidgetSubtask(id: UUID(), title: "Research", isComplete: true)],
+               dateAdded: Date(), completedDate: nil, isComplete: false),
+]
+
+#Preview("Empty", as: .systemMedium) {
+    AquariumWidget()
+} timeline: {
+    AquariumEntry(date: .now, tasks: [])
+}
+
+#Preview("With fish", as: .systemMedium) {
+    AquariumWidget()
+} timeline: {
+    AquariumEntry(date: .now, tasks: previewTasks)
+}
+
+#Preview("Large", as: .systemLarge) {
+    AquariumWidget()
+} timeline: {
+    AquariumEntry(date: .now, tasks: previewTasks)
+}
