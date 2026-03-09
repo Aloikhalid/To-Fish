@@ -65,7 +65,11 @@ struct ToFishWidgetEntryView: View {
                 time:  context.date.timeIntervalSinceReferenceDate
             )
         }
-        .containerBackground(for: .widget) { Color.clear }
+        .containerBackground(for: .widget) {
+            Image("bg_aquarium")
+                .resizable()
+                .scaledToFill()
+        }
     }
 }
 
@@ -119,10 +123,6 @@ struct AquariumWidgetScene: View {
     var body: some View {
         GeometryReader { geo in
             ZStack {
-                Image("bg_aquarium")
-                    .resizable().scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height).clipped()
-
                 Image("layer_sunlight")
                     .resizable().scaledToFill()
                     .opacity(sunlightOpacity).blendMode(.screen)
