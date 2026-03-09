@@ -12,7 +12,5 @@ import SwiftUI
 struct ToFishWidgetBundle: WidgetBundle {
     var body: some Widget {
         AquariumWidget()
-        ToFishWidgetControl()
-        ToFishWidgetLiveActivity()
     }
 }
