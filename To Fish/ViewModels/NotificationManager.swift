@@ -1,9 +1,3 @@
-//
-//  NotificationManager.swift
-//  To Fish
-//
-//  Created by alya Alabdulrahim on 09/09/1447 AH.
-//
 import UserNotifications
 
 struct NotificationManager {
@@ -58,4 +52,3 @@ struct NotificationManager {
         )
     }
 }
-

@@ -260,3 +260,4 @@ struct TaskDetailView: View {
     )
     return TaskDetailView(task: task, viewModel: vm, selectedTask: .constant(task))
 }
+

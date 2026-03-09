@@ -35,7 +35,11 @@ class TaskViewModel: ObservableObject {
     func addTask(_ task: TaskModel) {
         modelContext?.insert(task)
         save()
-        fetch()
+        // Directly append instead of re-fetching: SwiftData may not surface a
+        // just-inserted object to an immediate same-context fetch, so the task
+        // would silently disappear from activeTasks until the next cold launch.
+        activeTasks.append(task)
+        syncToWidget()
     }
 
     func releaseTask(_ task: TaskModel) {
@@ -43,20 +47,26 @@ class TaskViewModel: ObservableObject {
         task.completedDate = Date()
         task.isComplete = true
         save()
-        fetch()
+        // Remove from activeTasks and add to achievements immediately
+        activeTasks.removeAll { $0.id == task.id }
+        achievements.insert(task, at: 0)
+        syncToWidget()
     }
 
     func deleteTask(_ task: TaskModel) {
         NotificationManager.cancel(for: task.id)
         modelContext?.delete(task)
         save()
-        fetch()
+        // Remove from activeTasks immediately
+        activeTasks.removeAll { $0.id == task.id }
+        syncToWidget()
     }
 
     func deleteAchievement(_ task: TaskModel) {
         modelContext?.delete(task)
         save()
-        fetch()
+        // Remove from achievements immediately
+        achievements.removeAll { $0.id == task.id }
     }
 
     // MARK: - Subtasks
@@ -65,7 +75,11 @@ class TaskViewModel: ObservableObject {
            let subtask = task.subtasks.first(where: { $0.id == subtaskID }) {
             subtask.isComplete.toggle()
             save()
-            fetch()
+            // Directly append instead of re-fetching: SwiftData may not surface a
+                    // just-inserted object to an immediate same-context fetch, so the task
+                    // would silently disappear from activeTasks until the next cold launch.
+                    activeTasks.append(task)
+                    syncToWidget()
         }
     }
 
