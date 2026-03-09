@@ -2,7 +2,8 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
-    @StateObject var viewModel: TaskViewModel
+    // BUG-16: @ObservedObject because the view model is owned by ToFishApp / AppRoot
+    @ObservedObject var viewModel: TaskViewModel
     @State private var showAddTask = false
     @State private var showAchievements = false
     @State private var audioPlayer: AVAudioPlayer?

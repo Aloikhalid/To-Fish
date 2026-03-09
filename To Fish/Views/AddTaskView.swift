@@ -9,6 +9,13 @@ struct AddTaskView: View {
     @State private var subtaskTitles = ["", "", ""]
     @Environment(\.dismiss) var dismiss
 
+    // BUG-12: single static formatter instead of per-call allocation
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .medium
+        return f
+    }()
+
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -90,12 +97,13 @@ struct AddTaskView: View {
                         // MARK: - Task Type
                         VStack(alignment: .center, spacing: 12) {
                             HStack(spacing: 40) {
+                                // BUG-19: animation on the toggle call site, not on the VStack
                                 taskTypeButton(
                                     label: "Single task",
                                     isSelected: !isMultiStep,
                                     starSize: geo.size.width * 0.075,
                                     bubbleSize: geo.size.width * 0.14,
-                                    action: { isMultiStep = false }
+                                    action: { withAnimation(.easeInOut) { isMultiStep = false } }
                                 )
 
                                 taskTypeButton(
@@ -103,7 +111,7 @@ struct AddTaskView: View {
                                     isSelected: isMultiStep,
                                     starSize: geo.size.width * 0.075,
                                     bubbleSize: geo.size.width * 0.14,
-                                    action: { isMultiStep = true }
+                                    action: { withAnimation(.easeInOut) { isMultiStep = true } }
                                 )
                             }
                             .frame(maxWidth: .infinity, alignment: .center)
@@ -128,8 +136,8 @@ struct AddTaskView: View {
                                         }
                                     }
                                 }
+                                // BUG-19: .animation(…value:) removed; transition fires via withAnimation at call site
                                 .transition(.opacity)
-                                .animation(.easeInOut, value: isMultiStep)
                             }
                         }
 
@@ -142,7 +150,7 @@ struct AddTaskView: View {
                                 .padding()
                                 .background(Capsule().fill(Color.cyan.opacity(0.5)))
                         }
-                        .disabled(fishName.isEmpty)
+                        .disabled(fishName.isEmpty || (isMultiStep && subtaskTitles.allSatisfy { $0.isEmpty }))
                         .opacity(fishName.isEmpty ? 0.5 : 1)
                     }
                     .padding()
@@ -188,6 +196,9 @@ struct AddTaskView: View {
                 .map { title in Subtask(title: title) }
             : [Subtask]()
 
+        // BUG-08: block release if multi-step but no subtasks entered
+        if isMultiStep && subtasks.isEmpty { return }
+
         let newTask = TaskModel(
             fishName: fishName,
             taskDescription: taskDescription,
@@ -195,7 +206,8 @@ struct AddTaskView: View {
             isMultiStep: isMultiStep,
             subtasks: subtasks
         )
-        let dueDate = Date().addingTimeInterval(selectedDuration.timeInterval)
+        // BUG-06: derive dueDate from newTask.dateAdded, not a second Date() call
+        let dueDate = newTask.dateAdded.addingTimeInterval(selectedDuration.timeInterval)
         playBubblesSound()
         viewModel.addTask(newTask)
         NotificationManager.schedule(for: newTask, dueDate: dueDate)
@@ -203,9 +215,7 @@ struct AddTaskView: View {
     }
 
     func formattedDate() -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        return formatter.string(from: Date())
+        AddTaskView.dateFormatter.string(from: Date())
     }
 }
 

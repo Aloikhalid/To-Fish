@@ -7,17 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		569F438F2F53749A0064E2BF /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 569F438E2F53749A0064E2BF /* WidgetKit.framework */; };
-		569F43912F53749A0064E2BF /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 569F43902F53749A0064E2BF /* SwiftUI.framework */; };
-		569F43A22F53749B0064E2BF /* ToFishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		56FFB9732F5F6FA000CA037E /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56FFB9722F5F6FA000CA037E /* WidgetKit.framework */; };
+		56FFB9752F5F6FA000CA037E /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56FFB9742F5F6FA000CA037E /* SwiftUI.framework */; };
+		56FFB9862F5F6FA100CA037E /* ToFishWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 56FFB9702F5F6FA000CA037E /* ToFishWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		569F43A02F53749B0064E2BF /* PBXContainerItemProxy */ = {
+		56FFB9842F5F6FA100CA037E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 569F431B2F521DEB0064E2BF /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 569F438B2F53749A0064E2BF;
+			remoteGlobalIDString = 56FFB96F2F5F6FA000CA037E;
 			remoteInfo = ToFishWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
@@ -29,7 +29,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				569F43A22F53749B0064E2BF /* ToFishWidgetExtension.appex in Embed Foundation Extensions */,
+				56FFB9862F5F6FA100CA037E /* ToFishWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,9 +38,9 @@
 
 /* Begin PBXFileReference section */
 		569F43232F521DEB0064E2BF /* To Fish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "To Fish.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ToFishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		569F438E2F53749A0064E2BF /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
-		569F43902F53749A0064E2BF /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		56FFB9702F5F6FA000CA037E /* ToFishWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ToFishWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		56FFB9722F5F6FA000CA037E /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		56FFB9742F5F6FA000CA037E /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -51,12 +51,12 @@
 			);
 			target = 569F43222F521DEB0064E2BF /* To Fish */;
 		};
-		569F43A62F53749B0064E2BF /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */ = {
+		56FFB98A2F5F6FA100CA037E /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 569F438B2F53749A0064E2BF /* ToFishWidgetExtension */;
+			target = 56FFB96F2F5F6FA000CA037E /* ToFishWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -69,10 +69,10 @@
 			path = "To Fish";
 			sourceTree = "<group>";
 		};
-		569F43922F53749A0064E2BF /* ToFishWidget */ = {
+		56FFB9762F5F6FA000CA037E /* ToFishWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				569F43A62F53749B0064E2BF /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */,
+				56FFB98A2F5F6FA100CA037E /* Exceptions for "ToFishWidget" folder in "ToFishWidgetExtension" target */,
 			);
 			path = ToFishWidget;
 			sourceTree = "<group>";
@@ -87,12 +87,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		569F43892F53749A0064E2BF /* Frameworks */ = {
+		56FFB96D2F5F6FA000CA037E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				569F43912F53749A0064E2BF /* SwiftUI.framework in Frameworks */,
-				569F438F2F53749A0064E2BF /* WidgetKit.framework in Frameworks */,
+				56FFB9752F5F6FA000CA037E /* SwiftUI.framework in Frameworks */,
+				56FFB9732F5F6FA000CA037E /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,8 +103,8 @@
 			isa = PBXGroup;
 			children = (
 				569F43252F521DEB0064E2BF /* To Fish */,
-				569F43922F53749A0064E2BF /* ToFishWidget */,
-				569F438D2F53749A0064E2BF /* Frameworks */,
+				56FFB9762F5F6FA000CA037E /* ToFishWidget */,
+				56FFB9712F5F6FA000CA037E /* Frameworks */,
 				569F43242F521DEB0064E2BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -113,16 +113,16 @@
 			isa = PBXGroup;
 			children = (
 				569F43232F521DEB0064E2BF /* To Fish.app */,
-				569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */,
+				56FFB9702F5F6FA000CA037E /* ToFishWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		569F438D2F53749A0064E2BF /* Frameworks */ = {
+		56FFB9712F5F6FA000CA037E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				569F438E2F53749A0064E2BF /* WidgetKit.framework */,
-				569F43902F53749A0064E2BF /* SwiftUI.framework */,
+				56FFB9722F5F6FA000CA037E /* WidgetKit.framework */,
+				56FFB9742F5F6FA000CA037E /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -142,7 +142,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				569F43A12F53749B0064E2BF /* PBXTargetDependency */,
+				56FFB9852F5F6FA100CA037E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				569F43252F521DEB0064E2BF /* To Fish */,
@@ -154,26 +154,26 @@
 			productReference = 569F43232F521DEB0064E2BF /* To Fish.app */;
 			productType = "com.apple.product-type.application";
 		};
-		569F438B2F53749A0064E2BF /* ToFishWidgetExtension */ = {
+		56FFB96F2F5F6FA000CA037E /* ToFishWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 569F43A32F53749B0064E2BF /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */;
+			buildConfigurationList = 56FFB9872F5F6FA100CA037E /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */;
 			buildPhases = (
-				569F43882F53749A0064E2BF /* Sources */,
-				569F43892F53749A0064E2BF /* Frameworks */,
-				569F438A2F53749A0064E2BF /* Resources */,
+				56FFB96C2F5F6FA000CA037E /* Sources */,
+				56FFB96D2F5F6FA000CA037E /* Frameworks */,
+				56FFB96E2F5F6FA000CA037E /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				569F43922F53749A0064E2BF /* ToFishWidget */,
+				56FFB9762F5F6FA000CA037E /* ToFishWidget */,
 			);
 			name = ToFishWidgetExtension;
 			packageProductDependencies = (
 			);
 			productName = ToFishWidgetExtension;
-			productReference = 569F438C2F53749A0064E2BF /* ToFishWidgetExtension.appex */;
+			productReference = 56FFB9702F5F6FA000CA037E /* ToFishWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -189,7 +189,7 @@
 					569F43222F521DEB0064E2BF = {
 						CreatedOnToolsVersion = 26.2;
 					};
-					569F438B2F53749A0064E2BF = {
+					56FFB96F2F5F6FA000CA037E = {
 						CreatedOnToolsVersion = 26.2;
 					};
 				};
@@ -209,7 +209,7 @@
 			projectRoot = "";
 			targets = (
 				569F43222F521DEB0064E2BF /* To Fish */,
-				569F438B2F53749A0064E2BF /* ToFishWidgetExtension */,
+				56FFB96F2F5F6FA000CA037E /* ToFishWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -222,7 +222,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		569F438A2F53749A0064E2BF /* Resources */ = {
+		56FFB96E2F5F6FA000CA037E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,7 +239,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		569F43882F53749A0064E2BF /* Sources */ = {
+		56FFB96C2F5F6FA000CA037E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -249,10 +249,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		569F43A12F53749B0064E2BF /* PBXTargetDependency */ = {
+		56FFB9852F5F6FA100CA037E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 569F438B2F53749A0064E2BF /* ToFishWidgetExtension */;
-			targetProxy = 569F43A02F53749B0064E2BF /* PBXContainerItemProxy */;
+			target = 56FFB96F2F5F6FA000CA037E /* ToFishWidgetExtension */;
+			targetProxy = 56FFB9842F5F6FA100CA037E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -446,7 +446,7 @@
 			};
 			name = Release;
 		};
-		569F43A42F53749B0064E2BF /* Debug */ = {
+		56FFB9882F5F6FA100CA037E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -476,7 +476,7 @@
 			};
 			name = Debug;
 		};
-		569F43A52F53749B0064E2BF /* Release */ = {
+		56FFB9892F5F6FA100CA037E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -527,11 +527,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		569F43A32F53749B0064E2BF /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */ = {
+		56FFB9872F5F6FA100CA037E /* Build configuration list for PBXNativeTarget "ToFishWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				569F43A42F53749B0064E2BF /* Debug */,
-				569F43A52F53749B0064E2BF /* Release */,
+				56FFB9882F5F6FA100CA037E /* Debug */,
+				56FFB9892F5F6FA100CA037E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

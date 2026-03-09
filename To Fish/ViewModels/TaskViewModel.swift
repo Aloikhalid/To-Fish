@@ -18,17 +18,16 @@ class TaskViewModel: ObservableObject {
     func fetch() {
         guard let context = modelContext else { return }
 
-        let activeDescriptor = FetchDescriptor<TaskModel>(
-            predicate: #Predicate<TaskModel> { task in task.isComplete == false },
+        // Fetch all tasks and filter in memory to avoid #Predicate Bool comparison
+        // issues that can silently return empty results on some SwiftData versions.
+        let descriptor = FetchDescriptor<TaskModel>(
             sortBy: [SortDescriptor(\.dateAdded)]
         )
-        let achievementDescriptor = FetchDescriptor<TaskModel>(
-            predicate: #Predicate<TaskModel> { task in task.isComplete == true },
-            sortBy: [SortDescriptor(\.completedDate, order: .reverse)]
-        )
-
-        activeTasks = (try? context.fetch(activeDescriptor)) ?? []
-        achievements = (try? context.fetch(achievementDescriptor)) ?? []
+        let all = (try? context.fetch(descriptor)) ?? []
+        activeTasks = all.filter { !$0.isComplete }
+        achievements = all
+            .filter { $0.isComplete }
+            .sorted { ($0.completedDate ?? .distantPast) > ($1.completedDate ?? .distantPast) }
         syncToWidget()
     }
 
@@ -36,7 +35,11 @@ class TaskViewModel: ObservableObject {
     func addTask(_ task: TaskModel) {
         modelContext?.insert(task)
         save()
-        fetch()
+        // Directly append instead of re-fetching: SwiftData may not surface a
+        // just-inserted object to an immediate same-context fetch, so the task
+        // would silently disappear from activeTasks until the next cold launch.
+        activeTasks.append(task)
+        syncToWidget()
     }
 
     func releaseTask(_ task: TaskModel) {
@@ -44,20 +47,26 @@ class TaskViewModel: ObservableObject {
         task.completedDate = Date()
         task.isComplete = true
         save()
-        fetch()
+        // Remove from activeTasks and add to achievements immediately
+        activeTasks.removeAll { $0.id == task.id }
+        achievements.insert(task, at: 0)
+        syncToWidget()
     }
 
     func deleteTask(_ task: TaskModel) {
         NotificationManager.cancel(for: task.id)
         modelContext?.delete(task)
         save()
-        fetch()
+        // Remove from activeTasks immediately
+        activeTasks.removeAll { $0.id == task.id }
+        syncToWidget()
     }
 
     func deleteAchievement(_ task: TaskModel) {
         modelContext?.delete(task)
         save()
-        fetch()
+        // Remove from achievements immediately
+        achievements.removeAll { $0.id == task.id }
     }
 
     // MARK: - Subtasks
@@ -66,30 +75,44 @@ class TaskViewModel: ObservableObject {
            let subtask = task.subtasks.first(where: { $0.id == subtaskID }) {
             subtask.isComplete.toggle()
             save()
-            fetch()
+            // Directly append instead of re-fetching: SwiftData may not surface a
+                    // just-inserted object to an immediate same-context fetch, so the task
+                    // would silently disappear from activeTasks until the next cold launch.
+                    activeTasks.append(task)
+                    syncToWidget()
         }
     }
 
+    // BUG-08: returns false when isMultiStep but no subtasks exist (prevents vacuous-truth bypass)
     func allSubtasksComplete(for task: TaskModel) -> Bool {
         guard task.isMultiStep else { return true }
+        guard !task.subtasks.isEmpty else { return false }
         return task.subtasks.allSatisfy { $0.isComplete }
     }
 
     // MARK: - Time Calculations
+    // BUG-01 & BUG-04: single secondsRemaining helper; no force-unwrap; consistent time source
+    func secondsRemaining(for task: TaskModel) -> TimeInterval {
+        guard let deadline = Calendar.current.date(
+            byAdding: .day,
+            value: daysForDuration(task.duration),
+            to: task.dateAdded
+        ) else { return 0 }
+        return max(0, deadline.timeIntervalSinceNow)
+    }
+
     func daysRemaining(for task: TaskModel) -> Int {
-        let deadline = Calendar.current.date(byAdding: .day, value: daysForDuration(task.duration), to: task.dateAdded)!
-        let remaining = Calendar.current.dateComponents([.day], from: Date(), to: deadline).day ?? 0
-        return max(0, remaining)
+        Int(secondsRemaining(for: task) / 86400)
     }
 
     func hoursRemaining(for task: TaskModel) -> Int {
-        let deadline = Calendar.current.date(byAdding: .day, value: daysForDuration(task.duration), to: task.dateAdded)!
-        let remaining = Calendar.current.dateComponents([.hour], from: Date(), to: deadline).hour ?? 0
-        return max(0, remaining)
+        Int(secondsRemaining(for: task) / 3600)
     }
 
+    // BUG-04: correct last-day check using total seconds
     func isLastDay(for task: TaskModel) -> Bool {
-        return daysRemaining(for: task) == 0 && hoursRemaining(for: task) > 0
+        let secs = secondsRemaining(for: task)
+        return secs > 0 && secs < 86400
     }
 
     private func daysForDuration(_ duration: TaskDuration) -> Int {
@@ -126,8 +149,13 @@ class TaskViewModel: ObservableObject {
     }
 
     // MARK: - Save
+    // BUG-20: print encoding failures instead of silently dropping them
     private func save() {
-        try? modelContext?.save()
+        do {
+            try modelContext?.save()
+        } catch {
+            print("TaskViewModel save error: \(error)")
+        }
     }
 }
 

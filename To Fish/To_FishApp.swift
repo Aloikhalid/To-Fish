@@ -6,35 +6,43 @@
 //
 import SwiftUI
 import SwiftData
-
+import UserNotifications
+ 
+func registerFonts() {
+    guard let fontURL = Bundle.main.url(forResource: "Kavoon-Regular", withExtension: "ttf") else { return }
+    CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, nil)
+}
+ 
+ 
 @main
-struct To_FishApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([TaskModel.self, Subtask.self])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+struct ToFishApp: App {
+   
+    @StateObject private var viewModel = TaskViewModel()
+    
+    // Create the model container for persistent storage
+    let modelContainer: ModelContainer
+ 
+    init() {
+        registerFonts()
+        configureAudioSession()
+        NotificationManager.requestPermission()
+        
+        // Set up SwiftData container for persistent storage
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            modelContainer = try ModelContainer(for: TaskModel.self, Subtask.self)
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Failed to create ModelContainer: \(error)")
         }
-    }()
-
+    }
+ 
     var body: some Scene {
         WindowGroup {
-            AppRoot()
+            SplashView(viewModel: viewModel)
+                .modelContainer(modelContainer)
+                .onAppear {
+                    // Configure the view model with the model context
+                    viewModel.configure(modelContext: modelContainer.mainContext)
+                }
         }
-        .modelContainer(sharedModelContainer)
-    }
-}
-
-struct AppRoot: View {
-    @Environment(\.modelContext) private var modelContext
-    @StateObject private var viewModel = TaskViewModel()
-
-    var body: some View {
-        SplashView(viewModel: viewModel)
-            .onAppear {
-                viewModel.configure(modelContext: modelContext)
-            }
     }
 }
