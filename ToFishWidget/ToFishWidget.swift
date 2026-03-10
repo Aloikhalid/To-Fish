@@ -59,14 +59,19 @@ struct AquariumProvider: TimelineProvider {
 struct ToFishWidgetEntryView: View {
     let entry: AquariumEntry
     var body: some View {
-        AquariumWidgetScene(
-            tasks: Array(entry.tasks.prefix(5)),
-            time: entry.date.timeIntervalSinceReferenceDate
-        )
+        ZStack {
+            Color.teal
+            VStack(spacing: 6) {
+                Text("🐠 To Fish")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                Text("\(entry.tasks.count) task(s)")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.85))
+            }
+        }
         .containerBackground(for: .widget) {
-            Image("bg_aquarium")
-                .resizable()
-                .scaledToFill()
+            Color.teal
         }
     }
 }
