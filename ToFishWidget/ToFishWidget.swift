@@ -59,19 +59,14 @@ struct AquariumProvider: TimelineProvider {
 struct ToFishWidgetEntryView: View {
     let entry: AquariumEntry
     var body: some View {
-        ZStack {
-            Color.teal
-            VStack(spacing: 6) {
-                Text("🐠 To Fish")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                Text("\(entry.tasks.count) task(s)")
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.85))
-            }
-        }
+        AquariumWidgetScene(
+            tasks: Array(entry.tasks.prefix(5)),
+            time: entry.date.timeIntervalSinceReferenceDate
+        )
         .containerBackground(for: .widget) {
-            Color.teal
+            Image("bg_aquarium")
+                .resizable()
+                .scaledToFill()
         }
     }
 }
@@ -124,57 +119,54 @@ struct AquariumWidgetScene: View {
     private var waveOffset: CGFloat    { CGFloat(sin(time * 0.25) * 6) }
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                Image("layer_sunlight")
-                    .resizable().scaledToFill()
-                    .opacity(sunlightOpacity).blendMode(.screen)
-                    .frame(width: geo.size.width, height: geo.size.height).clipped()
+        ZStack {
+            Image("layer_sunlight")
+                .resizable().scaledToFill()
+                .opacity(sunlightOpacity).blendMode(.screen)
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
 
-                Image("layer_stars")
-                    .resizable().scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height).clipped()
+            Image("layer_stars")
+                .resizable().scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
 
-                ForEach(fish.indices, id: \.self) { i in
-                    let f       = fish[i]
-                    let xOff    = CGFloat(sin(time * f.swimSpeed + f.phase)) * geo.size.width * 0.38
-                    let yBase   = f.yLane * Double(geo.size.height)
-                    let yDrift  = sin(time * f.floatSpeed + f.phase * 1.3) * Double(geo.size.height) * 0.05
-                    let yOff    = CGFloat(yBase + yDrift)
-                    let goRight = cos(time * f.swimSpeed + f.phase) > 0
-                    let flipX: CGFloat = f.isSeahorse ? (goRight ? -1 : 1) : (goRight ? 1 : -1)
-                    let size: CGFloat  = f.isSeahorse ? geo.size.width * 0.16 : geo.size.width * 0.22
+            ForEach(fish.indices, id: \.self) { i in
+                let f      = fish[i]
+                let xOff   = CGFloat(sin(time * f.swimSpeed + f.phase)) * 115
+                let yOff   = CGFloat(f.yLane * 65 + sin(time * f.floatSpeed + f.phase * 1.3) * 8)
+                let goRight = cos(time * f.swimSpeed + f.phase) > 0
+                let flipX: CGFloat = f.isSeahorse ? (goRight ? -1 : 1) : (goRight ? 1 : -1)
+                let size: CGFloat  = f.isSeahorse ? 38 : 52
 
-                    Image(f.image)
-                        .resizable().scaledToFit()
-                        .frame(width: size)
-                        .scaleEffect(x: flipX, y: 1)
-                        .offset(x: xOff, y: yOff)
-                }
+                Image(f.image)
+                    .resizable().scaledToFit()
+                    .frame(width: size)
+                    .scaleEffect(x: flipX, y: 1)
+                    .offset(x: xOff, y: yOff)
+            }
 
-                Image("layer_seaweed1")
-                    .resizable().scaledToFill()
-                    .offset(x: waveOffset)
-                    .frame(width: geo.size.width, height: geo.size.height).clipped()
+            Image("layer_seaweed1")
+                .resizable().scaledToFill()
+                .offset(x: waveOffset)
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
 
-                Image("layer_seaweed2")
-                    .resizable().scaledToFill()
-                    .offset(x: -waveOffset * 1.3)
-                    .frame(width: geo.size.width, height: geo.size.height).clipped()
+            Image("layer_seaweed2")
+                .resizable().scaledToFill()
+                .offset(x: -waveOffset * 1.3)
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
 
-                if tasks.isEmpty {
-                    VStack(spacing: 4) {
-                        Text("No fish yet!")
-                            .font(.custom("Kavoon-Regular", size: 15))
-                            .foregroundColor(.white)
-                        Text("Add a task in the app")
-                            .font(.custom("Kavoon-Regular", size: 11))
-                            .foregroundColor(.white.opacity(0.75))
-                    }
+            if tasks.isEmpty {
+                VStack(spacing: 4) {
+                    Text("No fish yet!")
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundColor(.white)
+                    Text("Add a task in the app")
+                        .font(.system(size: 11))
+                        .foregroundColor(.white.opacity(0.75))
                 }
             }
-            .frame(width: geo.size.width, height: geo.size.height).clipped()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
     }
 }
 
