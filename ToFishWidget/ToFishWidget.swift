@@ -59,12 +59,10 @@ struct AquariumProvider: TimelineProvider {
 struct ToFishWidgetEntryView: View {
     let entry: AquariumEntry
     var body: some View {
-        TimelineView(.animation) { context in
-            AquariumWidgetScene(
-                tasks: Array(entry.tasks.prefix(5)),
-                time:  context.date.timeIntervalSinceReferenceDate
-            )
-        }
+        AquariumWidgetScene(
+            tasks: Array(entry.tasks.prefix(5)),
+            time: entry.date.timeIntervalSinceReferenceDate
+        )
         .containerBackground(for: .widget) {
             Image("bg_aquarium")
                 .resizable()
