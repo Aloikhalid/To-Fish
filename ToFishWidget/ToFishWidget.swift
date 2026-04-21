@@ -71,62 +71,60 @@ struct NextTaskCard: View {
     let task: WidgetTask?
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack(alignment: .bottomLeading) {
             RoundedRectangle(cornerRadius: 18)
                 .fill(cardColor.opacity(0.84))
 
             if let task {
-                VStack(spacing: 0) {
-                    // Bubbles float in the upper-right area
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 2) {
-                            Image("bubble_button")
-                                .resizable().scaledToFit()
-                                .frame(width: 14)
-                            Image("bubble_button")
-                                .resizable().scaledToFit()
-                                .frame(width: 20)
-                        }
-                        .padding(.trailing, 14)
-                        .padding(.top, 10)
-                    }
+                // Fish fills the card, padded to leave room for the bottom label
+                Image(fishImageName(for: task))
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.top, 10)
+                    .padding(.bottom, 46)
+                    .padding(.horizontal, 8)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                    // Fish
-                    Image(fishImageName(for: task))
+                // Bubbles overlaid top-right above the fish
+                VStack(spacing: 4) {
+                    Image("bubble_button")
                         .resizable().scaledToFit()
-                        .frame(height: 76)
-
-                    Spacer(minLength: 0)
-
-                    // Star + fish name + time left
-                    HStack(alignment: .center, spacing: 6) {
-                        Image("choice_star")
-                            .resizable().scaledToFit()
-                            .frame(width: 20, height: 20)
-                        VStack(alignment: .leading, spacing: 1) {
-                            Text(task.fishName)
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundColor(.white)
-                                .lineLimit(1)
-                            Text("\(task.duration) left")
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundColor(Color(red: 0.35, green: 0.88, blue: 0.98))
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 12)
+                        .frame(width: 14)
+                    Image("bubble_button")
+                        .resizable().scaledToFit()
+                        .frame(width: 22)
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(.top, 12)
+                .padding(.trailing, 16)
+
+                // Label pinned to bottom-left
+                HStack(alignment: .center, spacing: 6) {
+                    Image("choice_star")
+                        .resizable().scaledToFit()
+                        .frame(width: 22, height: 22)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(task.fishName)
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                        Text("\(task.duration) left")
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundColor(Color(red: 0.35, green: 0.88, blue: 0.98))
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.bottom, 12)
             } else {
-                VStack(spacing: 6) {
+                VStack(spacing: 8) {
                     Image("fish_sad")
                         .resizable().scaledToFit()
-                        .frame(width: 52)
+                        .frame(width: 55)
                     Text("No tasks!")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundColor(.white.opacity(0.7))
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
@@ -138,22 +136,11 @@ struct ChecklistCard: View {
     let tasks: [WidgetTask]
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: .topLeading) {
             RoundedRectangle(cornerRadius: 18)
                 .fill(cardColor.opacity(0.84))
 
-            VStack(alignment: .leading, spacing: 13) {
-                ForEach(Array(tasks.prefix(4))) { task in
-                    HStack(spacing: 8) {
-                        Image("choice_star")
-                            .resizable().scaledToFit()
-                            .frame(width: 22, height: 22)
-                        Text(task.fishName)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .lineLimit(1)
-                    }
-                }
+            VStack(alignment: .leading, spacing: 14) {
                 if tasks.isEmpty {
                     HStack(spacing: 8) {
                         Image("choice_star")
@@ -163,11 +150,21 @@ struct ChecklistCard: View {
                             .font(.system(size: 15, weight: .bold))
                             .foregroundColor(.white.opacity(0.55))
                     }
+                } else {
+                    ForEach(Array(tasks.prefix(4))) { task in
+                        HStack(spacing: 8) {
+                            Image("choice_star")
+                                .resizable().scaledToFit()
+                                .frame(width: 22, height: 22)
+                            Text(task.fishName)
+                                .font(.system(size: 17, weight: .bold))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                        }
+                    }
                 }
-                Spacer(minLength: 0)
             }
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
         }
     }
 }
