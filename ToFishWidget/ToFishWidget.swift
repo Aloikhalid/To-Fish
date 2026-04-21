@@ -23,6 +23,33 @@ struct WidgetTask: Identifiable, Decodable {
     let isComplete: Bool
 }
 
+// MARK: - Time helpers
+
+private extension WidgetTask {
+    var durationDays: Int {
+        switch duration {
+        case "One day":  return 1
+        case "3 days":   return 3
+        case "One week": return 7
+        default:         return 1
+        }
+    }
+
+    var deadline: Date {
+        Calendar.current.date(byAdding: .day, value: durationDays, to: dateAdded) ?? dateAdded
+    }
+
+    var timeRemainingText: String {
+        let seconds = deadline.timeIntervalSince(Date())
+        guard seconds > 0 else { return "overdue!" }
+        let hours = Int(seconds / 3600)
+        if hours < 1  { return "less than 1 hr left" }
+        if hours < 24 { return "\(hours) hours left" }
+        let days = hours / 24
+        return days == 1 ? "1 day left" : "\(days) days left"
+    }
+}
+
 // MARK: - Timeline entry
 
 struct AquariumEntry: TimelineEntry {
@@ -58,16 +85,103 @@ struct AquariumProvider: TimelineProvider {
 
 struct ToFishWidgetEntryView: View {
     let entry: AquariumEntry
+    @Environment(\.widgetFamily) private var family
+
+    private var nextTask: WidgetTask? {
+        entry.tasks.min(by: { $0.deadline < $1.deadline })
+    }
+
     var body: some View {
-        AquariumWidgetScene(
-            tasks: Array(entry.tasks.prefix(5)),
-            time: entry.date.timeIntervalSinceReferenceDate
-        )
+        Group {
+            switch family {
+            case .systemSmall:
+                SmallTaskListView(tasks: Array(entry.tasks.prefix(4)))
+            case .systemMedium:
+                MediumNextTaskView(
+                    nextTask: nextTask,
+                    time: entry.date.timeIntervalSinceReferenceDate
+                )
+            default:
+                AquariumWidgetScene(
+                    tasks: Array(entry.tasks.prefix(5)),
+                    time: entry.date.timeIntervalSinceReferenceDate
+                )
+            }
+        }
         .containerBackground(for: .widget) {
             Image("bg_aquarium")
                 .resizable()
                 .scaledToFill()
         }
+    }
+}
+
+// MARK: - Small widget: task list
+
+private struct SmallTaskListView: View {
+    let tasks: [WidgetTask]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            if tasks.isEmpty {
+                Spacer()
+                Text("No fish yet!")
+                    .font(.custom("Kavoon-Regular", size: 14))
+                    .foregroundColor(.white)
+                Spacer()
+            } else {
+                ForEach(tasks) { task in
+                    HStack(spacing: 8) {
+                        Image("choice_star")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 22, height: 22)
+                        Text(task.fishName)
+                            .font(.custom("Kavoon-Regular", size: 16))
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 0)
+            }
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+}
+
+// MARK: - Medium widget: next-up task
+
+private struct MediumNextTaskView: View {
+    let nextTask: WidgetTask?
+    let time: Double
+
+    var body: some View {
+        ZStack(alignment: .bottomLeading) {
+            AquariumWidgetScene(
+                tasks: nextTask.map { [$0] } ?? [],
+                time: time
+            )
+            if let task = nextTask {
+                HStack(alignment: .center, spacing: 8) {
+                    Image("choice_star")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 28, height: 28)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(task.fishName)
+                            .font(.custom("Kavoon-Regular", size: 18))
+                            .foregroundColor(.white)
+                        Text(task.timeRemainingText)
+                            .font(.custom("Kavoon-Regular", size: 12))
+                            .foregroundColor(Color(red: 0.30, green: 0.82, blue: 0.84))
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
@@ -181,35 +295,50 @@ struct AquariumWidget: Widget {
         }
         .configurationDisplayName("My Aquarium")
         .description("Watch your fish swim.")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
 
 // MARK: - Previews
 
 private let previewTasks: [WidgetTask] = [
-    WidgetTask(id: UUID(), fishName: "Bubbles", taskDescription: "Study for exam",
+    WidgetTask(id: UUID(), fishName: "Sara",   taskDescription: "Study for exam",
                duration: "One day", isMultiStep: false, subtasks: [],
                dateAdded: Date(), completedDate: nil, isComplete: false),
-    WidgetTask(id: UUID(), fishName: "Nemo",    taskDescription: "Buy groceries",
+    WidgetTask(id: UUID(), fishName: "Meme",   taskDescription: "Buy groceries",
                duration: "3 days", isMultiStep: false, subtasks: [],
                dateAdded: Date(), completedDate: nil, isComplete: false),
-    WidgetTask(id: UUID(), fishName: "Coral",   taskDescription: "Write report",
+    WidgetTask(id: UUID(), fishName: "Fajer",  taskDescription: "Write report",
                duration: "One week", isMultiStep: true,
                subtasks: [WidgetSubtask(id: UUID(), title: "Research", isComplete: true)],
                dateAdded: Date(), completedDate: nil, isComplete: false),
+    WidgetTask(id: UUID(), fishName: "Alia",   taskDescription: "Clean room",
+               duration: "3 days", isMultiStep: false, subtasks: [],
+               dateAdded: Date(), completedDate: nil, isComplete: false),
 ]
 
-#Preview("Empty", as: .systemMedium) {
+#Preview("Small – task list", as: .systemSmall) {
+    AquariumWidget()
+} timeline: {
+    AquariumEntry(date: .now, tasks: previewTasks)
+}
+
+#Preview("Small – empty", as: .systemSmall) {
     AquariumWidget()
 } timeline: {
     AquariumEntry(date: .now, tasks: [])
 }
 
-#Preview("With fish", as: .systemMedium) {
+#Preview("Medium – next up", as: .systemMedium) {
     AquariumWidget()
 } timeline: {
     AquariumEntry(date: .now, tasks: previewTasks)
+}
+
+#Preview("Medium – empty", as: .systemMedium) {
+    AquariumWidget()
+} timeline: {
+    AquariumEntry(date: .now, tasks: [])
 }
 
 #Preview("Large", as: .systemLarge) {
