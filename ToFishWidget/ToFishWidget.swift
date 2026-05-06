@@ -81,6 +81,37 @@ struct AquariumProvider: TimelineProvider {
     }
 }
 
+// MARK: - Shared aquarium background layers (static, no fish)
+
+private struct AquariumBackgroundView: View {
+    var body: some View {
+        ZStack {
+            // Fallback color if bg_aquarium image is unavailable in widget target
+            Color(red: 0.05, green: 0.30, blue: 0.40)
+
+            Image("bg_aquarium")
+                .resizable()
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+
+            Image("layer_stars")
+                .resizable().scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
+
+            Image("layer_seaweed1")
+                .resizable().scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
+
+            Image("layer_seaweed2")
+                .resizable().scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipped()
+    }
+}
+
 // MARK: - Entry view
 
 struct ToFishWidgetEntryView: View {
@@ -109,9 +140,9 @@ struct ToFishWidgetEntryView: View {
             }
         }
         .containerBackground(for: .widget) {
-            Image("bg_aquarium")
-                .resizable()
-                .scaledToFill()
+            // Solid color so the system widget chrome is always teal,
+            // even if bg_aquarium is missing from the widget asset catalog.
+            Color(red: 0.05, green: 0.30, blue: 0.40)
         }
     }
 }
@@ -122,31 +153,35 @@ private struct SmallTaskListView: View {
     let tasks: [WidgetTask]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            if tasks.isEmpty {
-                Spacer()
-                Text("No fish yet!")
-                    .font(.custom("Kavoon-Regular", size: 14))
-                    .foregroundColor(.white)
-                Spacer()
-            } else {
-                ForEach(tasks) { task in
-                    HStack(spacing: 8) {
-                        Image("choice_star")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
-                        Text(task.fishName)
-                            .font(.custom("Kavoon-Regular", size: 16))
-                            .foregroundColor(.white)
-                            .lineLimit(1)
+        ZStack(alignment: .topLeading) {
+            AquariumBackgroundView()
+
+            VStack(alignment: .leading, spacing: 10) {
+                if tasks.isEmpty {
+                    Spacer()
+                    Text("No fish yet!")
+                        .font(.custom("Kavoon-Regular", size: 14))
+                        .foregroundColor(.white)
+                    Spacer()
+                } else {
+                    ForEach(tasks) { task in
+                        HStack(spacing: 8) {
+                            Image("choice_star")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                            Text(task.fishName)
+                                .font(.custom("Kavoon-Regular", size: 16))
+                                .foregroundColor(.white)
+                                .lineLimit(1)
+                        }
                     }
+                    Spacer(minLength: 0)
                 }
-                Spacer(minLength: 0)
             }
+            .padding(14)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
@@ -234,13 +269,12 @@ struct AquariumWidgetScene: View {
 
     var body: some View {
         ZStack {
+            // Background is now self-contained — no longer relies on containerBackground
+            AquariumBackgroundView()
+
             Image("layer_sunlight")
                 .resizable().scaledToFill()
                 .opacity(sunlightOpacity).blendMode(.screen)
-                .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
-
-            Image("layer_stars")
-                .resizable().scaledToFill()
                 .frame(maxWidth: .infinity, maxHeight: .infinity).clipped()
 
             ForEach(fish.indices, id: \.self) { i in
@@ -258,6 +292,7 @@ struct AquariumWidgetScene: View {
                     .offset(x: xOff, y: yOff)
             }
 
+            // Animated seaweed on top of fish
             Image("layer_seaweed1")
                 .resizable().scaledToFill()
                 .offset(x: waveOffset)
